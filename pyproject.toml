@@ -1,0 +1,33 @@
+[project]
+name = "jobsearchagent"
+version = "0.1.0"
+description = "AI Job Search Agent with DeepEval"
+readme = "README.md"
+authors = [
+    { name = "kavyakapoor200", email = "kavyakapoor869@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "deepeval>=4.3.4",
+    "groq>=1.7.0",
+    "langchain-groq>=1.2.0",
+    "langchain-mcp-adapters>=0.3.1",
+    "langgraph>=1.2.22",
+    "mcp<2",
+    "pydantic>=2.14.3",
+    "pymupdf>=2.1",
+    "pytest>=9.2.0",
+    "python-dotenv>=1.2.4",
+    "scipy>=1.17.1",
+]
+
+[project.scripts]
+jobsearchagent = "jobsearchagent:main"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+
+[build-system]
+requires = ["uv_build>=0.13.8,<0.14.0"]
+build-backend = "uv_build"
