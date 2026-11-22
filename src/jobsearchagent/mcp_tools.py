@@ -14,6 +14,7 @@ import json
 import os
 import re
 import shutil
+import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -167,15 +168,16 @@ def wrap_cached_tool(tool: BaseTool, fixtures_dir: Path = DEFAULT_FIXTURES_DIR) 
     )
 
 
-async def load_firecrawl_mcp_tools(
+async def load_mcp_agent_tools(
+    csv_path: Optional[Path | str] = None,
+    include_csv_tools: bool = True,
     fixtures_dir: Path = DEFAULT_FIXTURES_DIR,
-    target_tools: Optional[set[str]] = None,
+    target_firecrawl_tools: Optional[set[str]] = None,
 ) -> List[BaseTool]:
-    """Connect to Firecrawl MCP via MultiServerMCPClient and return cached search/read tools."""
+    """Connect to Firecrawl MCP and JobStore FastMCP servers via MultiServerMCPClient."""
     npx_path = shutil.which("npx") or "npx"
     api_key = os.getenv("FIRECRAWL_API_KEY", "")
 
-    # Pass only minimal environment variables needed by node/npx and firecrawl-mcp
     needed_env_keys = {
         "PATH", "PATHEXT", "SYSTEMROOT", "WINDIR", "COMSPEC",
         "TEMP", "TMP", "APPDATA", "LOCALAPPDATA", "HOME", "USERPROFILE", "NODE_PATH"
@@ -195,13 +197,41 @@ async def load_firecrawl_mcp_tools(
         }
     }
 
+    if include_csv_tools:
+        jobstore_env = {k: v for k, v in os.environ.items() if k.upper() in needed_env_keys}
+        if csv_path:
+            jobstore_env["JOB_CSV_PATH"] = str(csv_path)
+        print(f"  [MCP CLIENT] Spawning subprocess: {sys.executable} -m jobsearchagent.mcp_jobstore_server (stdio)")
+        connections["jobstore"] = {
+            "transport": "stdio",
+            "command": sys.executable,
+            "args": ["-m", "jobsearchagent.mcp_jobstore_server"],
+            "env": jobstore_env,
+        }
+
     client = MultiServerMCPClient(connections=connections)
     raw_tools = await client.get_tools()
 
-    if target_tools is None:
-        # Phase 2 scope: search and read only
-        target_tools = {"firecrawl_search", "firecrawl_scrape", "jobs_search"}
+    if target_firecrawl_tools is None:
+        target_firecrawl_tools = {"firecrawl_search", "firecrawl_scrape", "jobs_search"}
 
-    selected = [t for t in raw_tools if t.name in target_tools]
-    cached = [wrap_cached_tool(t, fixtures_dir=fixtures_dir) for t in selected]
-    return cached
+    tools: List[BaseTool] = []
+    for t in raw_tools:
+        if t.name in target_firecrawl_tools:
+            tools.append(wrap_cached_tool(t, fixtures_dir=fixtures_dir))
+        elif t.name in ("save_job_to_csv", "read_saved_jobs"):
+            tools.append(t)
+
+    return tools
+
+
+async def load_firecrawl_mcp_tools(
+    fixtures_dir: Path = DEFAULT_FIXTURES_DIR,
+    target_tools: Optional[set[str]] = None,
+) -> List[BaseTool]:
+    """Backward-compatible loader for Firecrawl MCP tools only."""
+    return await load_mcp_agent_tools(
+        include_csv_tools=False,
+        fixtures_dir=fixtures_dir,
+        target_firecrawl_tools=target_tools,
+    )
