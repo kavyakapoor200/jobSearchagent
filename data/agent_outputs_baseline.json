@@ -1,0 +1,653 @@
+[
+  {
+    "golden_id": "search_01_bengaluru_ai",
+    "category": "search",
+    "input": "Search for AI Engineer jobs in Bengaluru.",
+    "actual_output": "**AI Engineer Jobs in Bengaluru**\n\n| # | Title | Company | Location | URL |\n|---|-------|---------|----------|-----|\n| 1 | AI Data Engineer (Speech & Language) | Blue Machines AI | Bengaluru, Karnataka, India | https://jobs.workable.com/view/vydouyD9TWFkApLwTbhnYc/ai-data-engineer-(speech-%26-language)-in-bengaluru-at-blue-machines-ai |\n| 2 | AI Engineer | AION | Bengaluru, Karnataka, India | https://jobs.workable.com/view/6hD3pkFH9JLrQPJmALejf2/hybrid-ai-engineer-in-bengaluru-at-aion |\n| 3 | Lead AI Engineer | Origin | Bengaluru, Karnataka, India | https://jobs.workable.com/view/tdFXmELE79wdJcCqaGYSXa/lead-ai-engineer-in-bengaluru-at-origin |\n\nFeel free to let me know if you’d like to dive deeper into any of these listings (e.g., scrape the full job description, evaluate the fit, or save a particular posting).",
+    "tools_called": [
+      {
+        "name": "jobs_search",
+        "input_parameters": {
+          "location": "Bengaluru",
+          "query": "AI Engineer",
+          "remote": false
+        }
+      }
+    ],
+    "expected_tools": [
+      "jobs_search"
+    ],
+    "expected_params": {
+      "query": "AI Engineer",
+      "location": "Bengaluru"
+    },
+    "expected_behavior": "Calls jobs_search with role AI Engineer and Bengaluru location.",
+    "expected_match_range": null,
+    "should_save": null,
+    "execution_time_seconds": 1.31,
+    "error": null
+  },
+  {
+    "golden_id": "search_02_remote_llm",
+    "category": "search",
+    "input": "Look for remote LLM Engineer positions.",
+    "actual_output": "**Remote LLM Engineer Positions**\n\n| # | Title | Company | Location | URL | Summary |\n|---|-------|---------|----------|-----|---------|\n| 1 | AI/ML & Prompt Engineer LLM, RAG & Voice Agent (India) | Quantum Loop AI | Remote (India) | <https://apply.workable.com/quantumloopai/j/B7F8DA3F6C/> | ... |\n| 2 | LLM Evaluation Engineer | ThirdLaw, Inc. | Remote | <https://jobs.ashbyhq.com/thirdlaw/146d2379-88e4-4073-9c2a-1899871fdaeb> | ... |\n| 3 | LLM Engineer — Post‑Training (Remote - Netherlands) | EverAI | Remote (Netherlands) | <https://jobs.ashbyhq.com/everai/8da3c45c-be9e-4525-bb06-dcc7e9e90c93> | ... |\n\n*(Summaries are truncated in the search results; you can click the URLs for full details.)*",
+    "tools_called": [
+      {
+        "name": "jobs_search",
+        "input_parameters": {
+          "location": "Remote",
+          "query": "LLM Engineer",
+          "remote": true
+        }
+      }
+    ],
+    "expected_tools": [
+      "jobs_search"
+    ],
+    "expected_params": {
+      "query": "LLM Engineer",
+      "remote": true
+    },
+    "expected_behavior": "Calls jobs_search with query LLM Engineer and remote filter active.",
+    "expected_match_range": null,
+    "should_save": null,
+    "execution_time_seconds": 12.38,
+    "error": null
+  },
+  {
+    "golden_id": "search_03_junior_ai_india",
+    "category": "search",
+    "input": "Find entry-level or junior AI Engineer openings in India.",
+    "actual_output": "**Entry‑level / junior AI Engineer openings in India (remote)**  \n\n| # | Title & Company | Location | Experience required | Key technical requirements |\n|---|-----------------|----------|---------------------|-----------------------------|\n| 1 | **AI Engineer – Awesome Motive** | Remote (India) | **3 + years** of professional AI/ML experience (mid‑senior) | Python, end‑to‑end AI product development, LLM pipelines, RAG, prompt design, API/agentic workflows, Docker, production‑grade code |\n| 2 | **AI Engineer – JoVE** | Remote (India) | **4 + years** of software/ML engineering (2 + years shipping LLM/NLP features) | Python, RAG (chunking, embeddings, hybrid retrieval), vector DB (Qdrant/Elasticsearch/etc.), LLM APIs (Anthropic/OpenAI/HF), Docker, cloud (AWS), API design, evaluation metrics |\n\n### Fit assessment against your profile  \n\n| Job | Match Score (0‑100) | Matched skills | Missing / less‑aligned skills | Reason |\n|-----|--------------------|----------------|------------------------------|--------|\n| **Awesome Motive** | **48** | Python, RAG, LLM pipelines, Docker, API design, FastAPI (implied), Git, testing habits | Experience level (requires 3 + years, you have ≤2.5 yr), “mid‑senior” wording, no explicit mention of the specific vector DBs you know (Qdrant, Neo4j) – but you have comparable skills. | The role is technically aligned but the seniority requirement exceeds your target (entry‑level/junior). The heavy deduction for experience drops the score below the saving threshold. |\n| **JoVE** | **42** | Python, RAG, hybrid retrieval (BM25 + dense embeddings), Qdrant‑type vector DBs, LLM APIs, Docker, cloud (AWS), CI/CD, testing | Experience level (4 + years required, well above 2.5 yr), “2 + years shipping LLM/NLP” still higher than your target, no explicit need for FastAPI/Streamlit (but you have them). | Although the technical stack matches many of your strengths, the senior‑level experience demand is too high, resulting in a low overall fit. |\n\n### What this means for you  \n\n- Both postings are **technically relevant** (Python, RAG, LLM APIs, vector search, Docker, CI/CD), so you already possess many of the required skills.  \n- However, **the experience requirements (3 + years and 4 + years)** place these roles outside the *entry‑level / junior* band you are targeting (≤2.5 years).  \n- Consequently, **both jobs score below the 60‑point threshold** and are **not saved** to your shortlist.\n\nIf you’d like to explore other listings (e.g., “junior AI Engineer”, “entry‑level LLM Engineer”, or roles explicitly stating “0‑2 years” or “fresh graduate”), just let me know and I can run additional searches.",
+    "tools_called": [
+      {
+        "name": "jobs_search",
+        "input_parameters": {
+          "location": "India",
+          "query": "entry-level AI Engineer",
+          "remote": null
+        }
+      },
+      {
+        "name": "firecrawl_scrape",
+        "input_parameters": {
+          "url": "https://jobs.workable.com/view/2tkz9CDmug4S7Gh3iiKfBe/remote-ai-engineer-in-india-at-awesome-motive"
+        }
+      },
+      {
+        "name": "firecrawl_scrape",
+        "input_parameters": {
+          "url": "https://jobs.workable.com/view/2tkz9CDmug4S7Gh3iiKfBe/remote-ai-engineer-in-india-at-awesome-motive"
+        }
+      },
+      {
+        "name": "read_saved_jobs",
+        "input_parameters": {}
+      },
+      {
+        "name": "firecrawl_search",
+        "input_parameters": {
+          "query": "Awesome Motive AI Engineer remote India job requirements"
+        }
+      },
+      {
+        "name": "jobs_search",
+        "input_parameters": {
+          "location": "India",
+          "query": "junior AI Engineer",
+          "remote": null
+        }
+      },
+      {
+        "name": "firecrawl_scrape",
+        "input_parameters": {
+          "url": "https://jobs.workable.com/view/7gKTuB8R2eewKCJjaS44mT/remote-ai-engineer-in-india-at-jove"
+        }
+      }
+    ],
+    "expected_tools": [
+      "jobs_search"
+    ],
+    "expected_params": {
+      "query": "junior AI Engineer"
+    },
+    "expected_behavior": "Calls jobs_search with junior or entry-level AI query in India or Remote.",
+    "expected_match_range": null,
+    "should_save": null,
+    "execution_time_seconds": 135.91,
+    "error": null
+  },
+  {
+    "golden_id": "search_04_rag_engineer",
+    "category": "search",
+    "input": "Search for Generative AI or RAG Engineer jobs.",
+    "actual_output": "**Generative AI Engineer search results (remote)**  \n\n| # | Title | Company | Location | URL |\n|---|-------|---------|----------|-----|\n| 1 | **AI Solutions Engineer (Generative AI & Agentic AI)** | EVERSANA | Pune, India (remote‑friendly) | https://jobs.smartrecruiters.com/EVERSANA1/744000159792319-ai-solutions-engineer-generative-ai-agentic-ai- |\n| 2 | **AI/ML Engineer — Generative AI Mission Systems** | Rackner | Remote | https://job-boards.greenhouse.io/rackner/jobs/4717776005 |\n| 3 | **Generative AI Engineer** | MCI (Medical Communications Inc.) | Remote (US) | https://careers-mci2.icims.com/jobs/50146/generative-ai-engineer/job |\n\n---\n\n**RAG Engineer search results (remote)**  \n\n| # | Title | Company / Source | Location | URL |\n|---|-------|------------------|----------|-----|\n| 1 | **Remote Retrieval‑Augmented Generation Jobs** (multiple listings) | ZipRecruiter aggregate | Remote | https://www.ziprecruiter.com/Jobs/Remote-Retrieval-Augmented-Generation |\n| 2 | **Remote RAG Engineering Jobs** | remoteai.io (job board) | Remote | https://remoteai.io/v2/jobs/skill/rag |\n| 3 | **AI/ML & Prompt Engineer – LLM, RAG & Voice Agent** | QuantumLoopAI | Remote (India‑based, UK hours) | https://apply.workable.com/quantumloopai/j/B7F8DA3F6C |\n| 4 | **Junior AI Engineer (focus on LLM, RAG, agents)** | RemoteRocketShip (listing) | Remote | https://www.remoterocketship.com/jobs/junior-ai-engineer/ |\n| 5 | **AI Engineer – Gen AI & LLM & RAG** | emagine Portal | Remote | https://portal.emagine.org/jobs/174401/ai-engineer-gen-ai-llm-rag?utm_source=JustJoinIt |\n\n*These listings were pulled from a web‑search for “RAG Engineer remote” and include both dedicated RAG‑focused roles and broader AI positions that explicitly mention RAG responsibilities.*  \n\n---\n\n**What to do next?**  \n- If you’d like deeper details (full job description, required experience, etc.) for any of the above postings, let me know the specific URL(s) and I can scrape the page and summarize.  \n- If you want me to evaluate any of these roles against your profile and possibly save the best matches, just point out which ones you’re interested in.",
+    "tools_called": [
+      {
+        "name": "jobs_search",
+        "input_parameters": {
+          "location": null,
+          "query": "Generative AI Engineer",
+          "remote": true
+        }
+      },
+      {
+        "name": "jobs_search",
+        "input_parameters": {
+          "location": null,
+          "query": "RAG Engineer",
+          "remote": true
+        }
+      },
+      {
+        "name": "firecrawl_search",
+        "input_parameters": {
+          "query": "RAG Engineer remote"
+        }
+      },
+      {
+        "name": "firecrawl_search",
+        "input_parameters": {
+          "query": "junior RAG Engineer remote"
+        }
+      }
+    ],
+    "expected_tools": [
+      "jobs_search"
+    ],
+    "expected_params": {
+      "query": "RAG Generative AI"
+    },
+    "expected_behavior": "Uses search tool targeting RAG / Generative AI keywords.",
+    "expected_match_range": null,
+    "should_save": null,
+    "execution_time_seconds": 51.65,
+    "error": null
+  },
+  {
+    "golden_id": "search_05_hyderabad_ai",
+    "category": "search",
+    "input": "Are there any AI developer jobs in Hyderabad?",
+    "actual_output": "Here are some AI‑developer positions currently listed for Hyderabad (based on the latest web search results):\n\n| # | Job Title | Company | Location | Source |\n|---|-----------|---------|----------|--------|\n| 1 | **AI Developer** | Experian | Hyderabad, India | [Experian Careers](https://jobs.experian.com/job/ai-developer-in-hyderabad-india-jid-3134) |\n| 2 | **AI Developer** | NetM Corporate Solutions | Hyderabad, India (Hybrid) | [Naukri.com](https://www.naukri.com/ai-developer-jobs-in-hyderabad-secunderabad) |\n| 3 | **AI Engineer** | OrangeShark | Hyderabad, Telangana | [Indeed](https://in.indeed.com/q-ai-engineer-l-hyderabad,-telangana-jobs.html) |\n| 4 | **Generative AI Engineer** | Techolution | Hyderabad, Telangana | [Indeed](https://in.indeed.com/q-ai-engineer-l-hyderabad,-telangana-jobs.html) |\n| 5 | **Gen AI Engineer** | WalkingTree Technologies | Hyderabad, Telangana | [Indeed](https://in.indeed.com/q-ai-engineer-l-hyderabad,-telangana-jobs.html) |\n| 6 | **AI Developer** | LinkedIn (various employers) | Hyderabad | [LinkedIn Jobs](https://in.linkedin.com/jobs/ai-developer-jobs-hyderabad) |\n| 7 | **Software Engineer II – Gen AI Developer** | Deloitte (USI) | Hyderabad, Telangana | [Deloitte Careers](https://usijobs.deloitte.com/en_US/careersUSI/JobDetail/USI-EH27-Gen-AI-Developer-L35-Senior-Analyst-Hyderabad/355086) |\n\nThese listings include a mix of junior and senior roles. If you’d like more details on any specific posting (e.g., full job description, required experience, or to evaluate fit with your profile), just let me know the URL or the job title, and I can fetch and summarize it for you.",
+    "tools_called": [
+      {
+        "name": "jobs_search",
+        "input_parameters": {
+          "location": "Hyderabad",
+          "query": "AI developer",
+          "remote": null
+        }
+      },
+      {
+        "name": "firecrawl_search",
+        "input_parameters": {
+          "query": "AI developer Hyderabad"
+        }
+      }
+    ],
+    "expected_tools": [
+      "jobs_search"
+    ],
+    "expected_params": {
+      "location": "Hyderabad"
+    },
+    "expected_behavior": "Calls search tool with Hyderabad as the designated location.",
+    "expected_match_range": null,
+    "should_save": null,
+    "execution_time_seconds": 29.43,
+    "error": null
+  },
+  {
+    "golden_id": "search_06_langgraph_specialist",
+    "category": "search",
+    "input": "Search specifically for LangGraph or LangChain AI Engineer postings.",
+    "actual_output": "**LangGraph / LangChain AI Engineer postings (search results)**  \n\n| # | Title | Company / Site | Location | URL | Short description |\n|---|-------|----------------|----------|-----|-------------------|\n| 1 | **AI Software Engineer (Remote, US)** | Net Impact Strategies | Remote (US) | <https://careers-netimpactstrategies.icims.com/jobs/3725/ai-software-engineer/job> | Design, build, and maintain AI‑powered software solutions. Requires Python, LLM experience, and familiarity with LangChain/LangGraph. |\n| 2 | **AI Engineer – Remote (South Africa)** | Huzzle | Remote (South Africa) | <https://apply.workable.com/huzzle/j/172A019A2A/> | Focus on AI model development, data pipelines, and deployment. Emphasis on Python, FastAPI, and LLM tooling. |\n| 3 | **AI Engineer, Customer Success** | Samsara | Remote (US) | <https://www.samsara.com/company/careers/roles/8024110?gh_jid=8024110> | Build AI features for customer‑success tools. Requires Python, REST APIs, and experience with LLMs. |\n\n---\n\n**Additional job‑search results (web search)**  \n\n| # | Title | Site | URL | Notes |\n|---|-------|------|-----|-------|\n| 4 | **Langchain Engineer jobs in Remote** | Indeed | <https://www.indeed.com/q-langchain-engineer-l-remote-jobs.html> | Aggregated list of remote LangChain Engineer roles (various companies). |\n| 5 | **LangChain Careers** | LangChain | <https://www.langchain.com/careers> | Official LangChain career page – includes open roles for LangChain/LangGraph engineers. |\n| 6 | **Langchain jobs in remote** | Dice | <https://www.dice.com/jobs/q-langchain-l-remote-jobs> | Search results for remote LangChain positions, including senior and mid‑level roles. |\n\n---\n\n**What’s next?**  \n- If you’d like to **scrape a specific posting** for full details, provide the URL.  \n- If you want to **evaluate** a posting against your profile, paste the job description or let me know which posting to analyze.  \n- If you’d like me to **search further** (e.g., for Chennai or Bengaluru locations), just let me know!",
+    "tools_called": [
+      {
+        "name": "jobs_search",
+        "input_parameters": {
+          "location": "Remote",
+          "query": "LangGraph AI Engineer",
+          "remote": true
+        }
+      },
+      {
+        "name": "jobs_search",
+        "input_parameters": {
+          "location": "Remote",
+          "query": "LangChain AI Engineer",
+          "remote": true
+        }
+      },
+      {
+        "name": "firecrawl_search",
+        "input_parameters": {
+          "query": "LangChain AI Engineer"
+        }
+      },
+      {
+        "name": "firecrawl_search",
+        "input_parameters": {
+          "query": "LangChain AI Engineer remote job"
+        }
+      }
+    ],
+    "expected_tools": [
+      "jobs_search"
+    ],
+    "expected_params": {
+      "query": "LangGraph"
+    },
+    "expected_behavior": "Calls jobs_search with LangGraph or LangChain in query.",
+    "expected_match_range": null,
+    "should_save": null,
+    "execution_time_seconds": 71.33,
+    "error": null
+  },
+  {
+    "golden_id": "search_07_web_search_company_careers",
+    "category": "search",
+    "input": "Use web search to check for AI careers at Sarvam AI in Bengaluru.",
+    "actual_output": "**AI‑focused roles currently listed on Sarvam AI’s Bengaluru careers page**\n\n| Job Title | Location | Notes |\n|-----------|----------|-------|\n| **ML Ops Engineer, Chanakya** | Bengaluru (Full‑time, On‑site) | Focus on model deployment, monitoring, and infrastructure for AI workloads. |\n| **Software Engineer – Model API Platform** | Bengaluru (Full‑time, On‑site) | Builds and maintains APIs that expose AI models to internal/external consumers. |\n| **Platform Engineer – AI Infrastructure** | Bengaluru (Full‑time, On‑site) | Designs and manages the underlying AI infrastructure (compute, storage, networking). |\n| **Performance Engineer, Inference** | Bengaluru (Full‑time, On‑site) | Optimises inference pipelines and performance of AI models. |\n| **Performance Engineer, Kernels** | Bengaluru (Full‑time, On‑site) | Works on low‑level kernel optimisations for AI workloads. |\n| **SDE2 – API Platform** | Bengaluru (Full‑time, On‑site) | While not explicitly AI‑labelled, this role involves building APIs that could serve AI services. |\n\n**How to proceed**\n\n1. **Review the full job descriptions** – you can click the links on Sarvam’s careers page or the LinkedIn job listings to see detailed requirements and responsibilities.  \n2. **Match against your skill set** – roles like ML Ops Engineer and Model API Platform align closely with your experience in Python, FastAPI, LangChain, QLoRA, PEFT, RAG, and Docker.  \n3. **Apply** – if a role meets your experience threshold (≤ 2.5 yrs) and skill match, you can submit your application directly through the Sarvam careers portal or via the provided LinkedIn/ashby links.\n\nLet me know if you’d like me to scrape a specific posting for a deeper skill‑match analysis or to save any of these roles for later!",
+    "tools_called": [
+      {
+        "name": "firecrawl_search",
+        "input_parameters": {
+          "query": "Sarvam AI Bengaluru AI Engineer careers"
+        }
+      }
+    ],
+    "expected_tools": [
+      "firecrawl_search"
+    ],
+    "expected_params": {
+      "query": "Sarvam AI"
+    },
+    "expected_behavior": "Calls firecrawl_search or jobs_search targeting Sarvam AI careers.",
+    "expected_match_range": null,
+    "should_save": null,
+    "execution_time_seconds": 33.77,
+    "error": null
+  },
+  {
+    "golden_id": "read_01_valid_posting",
+    "category": "read_job",
+    "input": "Please scrape and read the job details from https://jobs.workable.com/view/vydouyD9TWFkApLwTbhnYc/ai-data-engineer-(speech-%26-language)-in-bengaluru-at-blue-machines-ai",
+    "actual_output": "**Job Evaluation**\n\n| Item | Details |\n|------|---------|\n| **Job URL** | https://jobs.workable.com/view/vydouyD9TWFkApLwTbhnYc/ai-data-engineer-(speech-%26-language)-in-bengaluru-at-blue-machines-ai |\n| **Job Title** | AI Data Engineer (Speech & Language) |\n| **Location** | Bengaluru, India (On‑site) |\n| **Target Role Match** | 20 % (AI Data Engineer is adjacent to “AI Engineer” but not a direct match to LLM/RAG/Agent roles) |\n| **Experience Requirement** | 1–2 years (candidate’s max 2.5 years → 100 %) |\n| **Matched Skills** | Python, Pandas, Hugging Face Transformers, Git |\n| **Missing Skills** | Audio tooling (librosa, torchaudio, sox, ffmpeg), STT/TTS knowledge, Linux/Bash proficiency, data‑pipeline experience |\n| **Match Score** | **55** |\n| **Reason** | The role aligns with the candidate’s Python, Pandas, Hugging Face, and Git expertise, and the experience requirement is satisfied. However, the job demands audio‑processing libraries, STT/TTS domain knowledge, and Linux/Bash skills that the candidate does not list, and the title is not a direct match to the preferred AI Engineer / LLM / RAG / AI Agent Engineer roles. Consequently, the overall fit falls below the 60 % threshold. |\n\n**Decision**  \nThe match score (55) is below the required 60 % threshold, so this job will **not** be saved to the CSV.",
+    "tools_called": [
+      {
+        "name": "firecrawl_scrape",
+        "input_parameters": {
+          "url": "https://jobs.workable.com/view/vydouyD9TWFkApLwTbhnYc/ai-data-engineer-(speech-%26-language)-in-bengaluru-at-blue-machines-ai"
+        }
+      }
+    ],
+    "expected_tools": [
+      "firecrawl_scrape"
+    ],
+    "expected_params": {
+      "url": "https://jobs.workable.com/view/vydouyD9TWFkApLwTbhnYc/ai-data-engineer-(speech-%26-language)-in-bengaluru-at-blue-machines-ai"
+    },
+    "expected_behavior": "Calls firecrawl_scrape on the exact target URL and summarizes qualifications without inventing details.",
+    "expected_match_range": null,
+    "should_save": null,
+    "execution_time_seconds": 19.15,
+    "error": null
+  },
+  {
+    "golden_id": "read_02_hacker_news_read",
+    "category": "read_job",
+    "input": "Read and summarize the job page at https://news.ycombinator.com/jobs",
+    "actual_output": "**Hacker News “Jobs” page – snapshot (as of the scrape)**  \n\n- The page lists **29** recent job postings from Y Combinator‑backed startups.  \n- Most listings are for **engineering roles** (product, AI/ML, software, research, platform, etc.).  \n- Locations vary: many are **remote** or in the U.S. (San Francisco, Austin, Denver, NYC, etc.), with a few international openings (Europe, Canada).  \n- A few postings target **founding or senior‑level** positions, but most are for **entry‑to‑mid‑level** roles suitable for candidates with up to 2.5 years of experience.  \n- The page includes links to the company career pages or job portals (e.g., `tasklet.ai`, `ycombinator.com`, `atg.science`, `up.codes`, `bitmovin.com`, etc.).  \n\n**Key takeaways for a junior AI/LLM engineer:**\n\n1. **Remote-friendly** opportunities are plentiful (e.g., Tasklet, Evidence, Autonomous, Tinfoil, etc.).  \n2. **AI/ML focus** appears in several listings (e.g., Autonomous, Tinfoil, Weave, PostEra).  \n3. **Startup culture** and **fast‑moving environments** are common, which may align well with a candidate looking to grow quickly.  \n\nIf you’d like to dive deeper into any specific posting, let me know the title or company, and I can scrape the full description for you.",
+    "tools_called": [
+      {
+        "name": "firecrawl_scrape",
+        "input_parameters": {
+          "url": "https://news.ycombinator.com/jobs"
+        }
+      }
+    ],
+    "expected_tools": [
+      "firecrawl_scrape"
+    ],
+    "expected_params": {
+      "url": "https://news.ycombinator.com/jobs"
+    },
+    "expected_behavior": "Calls firecrawl_scrape on the YC jobs URL and returns an accurate summary.",
+    "expected_match_range": null,
+    "should_save": null,
+    "execution_time_seconds": 27.61,
+    "error": null
+  },
+  {
+    "golden_id": "read_03_broken_url",
+    "category": "read_job",
+    "input": "Scrape and read the requirements from this job link: https://invalid-domain-xyz-404.com/jobs/ai-lead",
+    "actual_output": "I’m sorry, but I couldn’t retrieve the job posting from that URL. The domain appears to be invalid or unreachable, so I’m unable to scrape or read its requirements. If you have another link or additional details, please share them and I’ll gladly help.",
+    "tools_called": [
+      {
+        "name": "firecrawl_scrape",
+        "input_parameters": {
+          "url": "https://invalid-domain-xyz-404.com/jobs/ai-lead"
+        }
+      }
+    ],
+    "expected_tools": [
+      "firecrawl_scrape"
+    ],
+    "expected_params": {},
+    "expected_behavior": "Attempts scrape; when failed or unreachable, reports page cannot be read rather than hallucinating requirements.",
+    "expected_match_range": null,
+    "should_save": null,
+    "execution_time_seconds": 14.43,
+    "error": null
+  },
+  {
+    "golden_id": "read_04_read_and_extract_skills",
+    "category": "read_job",
+    "input": "Scrape https://jobs.workable.com/view/6hD3pkFH9JLrQPJmALejf2/hybrid-ai-engineer-in-bengaluru-at-aion and list all required technical skills mentioned on the page.",
+    "actual_output": "**Technical skills explicitly mentioned in the job posting**\n\n- Large Language Models (LLMs)  \n- Multimodal models  \n- Intelligent agents / agentic workflows  \n- Prompt engineering  \n- Retrieval systems / Retrieval‑Augmented Generation (RAG) pipelines  \n- AI agents  \n- Model evaluation & fine‑tuning  \n- APIs (building, integrating, and exposing)  \n- Cloud infrastructure (deployment, orchestration)  \n- AI services & reusable components  \n- Scalable inference pipelines  \n- Model serving & orchestration  \n- Deployment & productionization  \n- Evaluation frameworks (continuous quality measurement)  \n- Enterprise systems integration  \n- Databases  \n- Third‑party platform integration  \n\nThese are the technical capabilities the posting highlights as required or highly relevant for the role.",
+    "tools_called": [
+      {
+        "name": "firecrawl_scrape",
+        "input_parameters": {
+          "url": "https://jobs.workable.com/view/6hD3pkFH9JLrQPJmALejf2/hybrid-ai-engineer-in-bengaluru-at-aion"
+        }
+      },
+      {
+        "name": "firecrawl_scrape",
+        "input_parameters": {
+          "url": "https://jobs.workable.com/view/6hD3pkFH9JLrQPJmALejf2/hybrid-ai-engineer-in-bengaluru-at-aion"
+        }
+      },
+      {
+        "name": "firecrawl_scrape",
+        "input_parameters": {
+          "url": "https://jobs.workable.com/view/6hD3pkFH9JLrQPJmALejf2/hybrid-ai-engineer-in-bengaluru-at-aion"
+        }
+      }
+    ],
+    "expected_tools": [
+      "firecrawl_scrape"
+    ],
+    "expected_params": {},
+    "expected_behavior": "Scrapes the URL and lists only skills explicitly stated in the page markdown.",
+    "expected_match_range": null,
+    "should_save": null,
+    "execution_time_seconds": 13.85,
+    "error": null
+  },
+  {
+    "golden_id": "match_01_strong_fit",
+    "category": "match",
+    "input": "Evaluate this job for me: 'Junior AI Engineer at Blue Machines AI in Bengaluru. Requires 1-2 years experience, strong Python, Hugging Face, LLM evaluation, and Git. Build dataset pipelines and agent evaluation.' Calculate match score, matched skills, missing skills, and reason.",
+    "actual_output": "**Match Evaluation**\n\n- **Match Score:** 90  \n- **Matched Skills:** Python, Hugging Face Transformers, Git, LLM evaluation (LLM‑as‑a‑Judge), dataset pipelines (Pandas, Firecrawl), agent evaluation (LangGraph, LangChain)  \n- **Missing Skills:** None  \n- **Reason:** The candidate’s experience (≤ 2.5 yrs) and core skill set—Python, Hugging Face, LLM evaluation, Git, and pipeline/agent development—align closely with the Junior AI Engineer role at Blue Machines AI.",
+    "tools_called": [],
+    "expected_tools": [],
+    "expected_params": {},
+    "expected_behavior": "Evaluates as strong match (score >= 70) with 0-2 years exp, Python, Hugging Face, Git matched.",
+    "expected_match_range": [
+      70,
+      95
+    ],
+    "should_save": null,
+    "execution_time_seconds": 17.2,
+    "error": null
+  },
+  {
+    "golden_id": "match_02_senior_weak_fit",
+    "category": "match",
+    "input": "Evaluate this job: 'Senior Director of AI & VP Engineering at Enterprise Cloud. Requires 12+ years of software leadership, budget management, and managing 50+ engineers.' Calculate match score and reason.",
+    "actual_output": "**Match Score:** 0/100  \n\n**Reason:**  \nThe role is a senior leadership position (Senior Director of AI & VP Engineering) demanding 12+ years of software leadership, budget oversight, and management of 50+ engineers—none of which align with the candidate’s 2.5‑year junior‑level experience and technical focus on AI engineering. Consequently, the candidate lacks the required experience, managerial responsibilities, and leadership skills, resulting in a zero match.",
+    "tools_called": [],
+    "expected_tools": [],
+    "expected_params": {},
+    "expected_behavior": "Evaluates as poor/weak fit (score < 50) due to 12+ years leadership requirement exceeding candidate profile.",
+    "expected_match_range": [
+      0,
+      45
+    ],
+    "should_save": null,
+    "execution_time_seconds": 3.8,
+    "error": null
+  },
+  {
+    "golden_id": "match_03_partial_fit",
+    "category": "match",
+    "input": "Evaluate this job: 'Data Analyst at RetailCorp in Bengaluru. Requires SQL, Tableau, PowerBI, and Excel. 1 year experience.' Calculate match score, matched skills, missing skills, and reason.",
+    "actual_output": "**Match Evaluation**\n\n| Item | Value |\n|------|-------|\n| **Match Score** | **20** |\n| **Matched Skills** | [] |\n| **Missing Skills** | `SQL`, `Tableau`, `PowerBI`, `Excel` |\n| **Reason** | The posting is for a Data Analyst role that requires SQL, Tableau, PowerBI, and Excel—skills not present in the candidate’s profile. Additionally, the target role does not align with the candidate’s focus on AI/LLM engineering, resulting in a low overall fit. |",
+    "tools_called": [],
+    "expected_tools": [],
+    "expected_params": {},
+    "expected_behavior": "Evaluates as moderate/partial fit; role is Data Analyst rather than target AI/LLM Engineer, with missing Tableau/PowerBI.",
+    "expected_match_range": [
+      0,
+      40
+    ],
+    "should_save": null,
+    "execution_time_seconds": 3.19,
+    "error": null
+  },
+  {
+    "golden_id": "match_04_unrelated_frontend",
+    "category": "match",
+    "input": "Evaluate this role: 'Senior React & CSS UI Designer at DesignStudio. Requires 5 years Figma, CSS animation, responsive layout, and Next.js.' Give match score and reason.",
+    "actual_output": "**Match Score:** 0/100  \n**Reason:** The role is a Senior React & CSS UI Designer, which does not align with the candidate’s target roles (AI Engineer, LLM Engineer, RAG Engineer, AI Agent Engineer). Additionally, the position requires 5 years of experience and UI‑design skills (Figma, CSS animation, responsive layout, Next.js) that are not present in the candidate’s skill set.",
+    "tools_called": [],
+    "expected_tools": [],
+    "expected_params": {},
+    "expected_behavior": "Evaluates as weak/irrelevant fit (score < 40) due to frontend design focus and missing candidate overlap.",
+    "expected_match_range": [
+      0,
+      35
+    ],
+    "should_save": null,
+    "execution_time_seconds": 3.57,
+    "error": null
+  },
+  {
+    "golden_id": "match_05_agentic_ai_strong",
+    "category": "match",
+    "input": "Evaluate this job: 'Agentic AI Developer at StartupX (Remote). 1-2 years experience. Stack: Python, LangGraph, FastAPI, Docker, Qdrant, RAG evaluation.' Calculate match score and matched skills.",
+    "actual_output": "**Match Evaluation**\n\n- **Match Score:** 100  \n- **Matched Skills:** Python, LangGraph, FastAPI, Docker, Qdrant, RAG  \n- **Missing Skills:** None  \n\n**Reason:** The role is a perfect fit—target role aligns with the candidate’s AI Agent Engineer focus, the experience requirement (1‑2 yrs) is within the 2.5‑yr limit, and all listed technical skills are present in the candidate’s profile.",
+    "tools_called": [],
+    "expected_tools": [],
+    "expected_params": {},
+    "expected_behavior": "Evaluates as very strong match (score >= 80); matches Python, LangGraph, FastAPI, Docker, Qdrant, RAG.",
+    "expected_match_range": [
+      80,
+      100
+    ],
+    "should_save": null,
+    "execution_time_seconds": 4.29,
+    "error": null
+  },
+  {
+    "golden_id": "match_06_java_backend_mismatch",
+    "category": "match",
+    "input": "Evaluate this role: 'Core Java Backend Engineer at FinTechBank. Requires 4 years Spring Boot, Hibernate, Java 17, Oracle DB, and Kubernetes microservices.' Calculate score and missing skills.",
+    "actual_output": "**Match Evaluation**\n\n- **Match Score:** **5/100**  \n- **Matched Skills:** None  \n- **Missing Skills:** Spring Boot, Hibernate, Java 17, Oracle DB, Kubernetes microservices  \n\n**Reason:**  \nThe posting is for a Core Java Backend Engineer with 4+ years of experience and Java‑centric technologies, which do not align with the candidate’s AI/LLM focus or junior‑level experience.",
+    "tools_called": [],
+    "expected_tools": [],
+    "expected_params": {},
+    "expected_behavior": "Low score (< 50) due to Java/Spring stack mismatch and experience requirement.",
+    "expected_match_range": [
+      0,
+      30
+    ],
+    "should_save": null,
+    "execution_time_seconds": 12.15,
+    "error": null
+  },
+  {
+    "golden_id": "save_01_qualifying_job",
+    "category": "save_and_duplicates",
+    "input": "I found this great job: 'AI Data Engineer' at 'Blue Machines AI' in 'Bengaluru'. URL: 'https://jobs.workable.com/view/vydouyD9TWFkApLwTbhnYc/ai-data-engineer-(speech-%26-language)-in-bengaluru-at-blue-machines-ai'. Match score is 85, matched skills are Python and Hugging Face. Please save it to the CSV.",
+    "actual_output": "The job has been saved successfully with a match score of 85.",
+    "tools_called": [
+      {
+        "name": "read_saved_jobs",
+        "input_parameters": {}
+      },
+      {
+        "name": "save_job_to_csv",
+        "input_parameters": {
+          "company": "Blue Machines AI",
+          "location": "Bengaluru",
+          "match_score": 85,
+          "matched_skills": [
+            "Python",
+            "Hugging Face"
+          ],
+          "missing_skills": [],
+          "posted_date": "",
+          "reason": "The role aligns well with the candidate's Python and Hugging Face expertise, and the seniority level fits the junior/entry-level experience range.",
+          "title": "AI Data Engineer",
+          "url": "https://jobs.workable.com/view/vydouyD9TWFkApLwTbhnYc/ai-data-engineer-(speech-%26-language)-in-bengaluru-at-blue-machines-ai"
+        }
+      }
+    ],
+    "expected_tools": [
+      "save_job_to_csv"
+    ],
+    "expected_params": {},
+    "expected_behavior": "Calls save_job_to_csv with score 85 and the job details.",
+    "expected_match_range": null,
+    "should_save": true,
+    "execution_time_seconds": 46.03,
+    "error": null
+  },
+  {
+    "golden_id": "save_02_below_threshold_rejection",
+    "category": "save_and_duplicates",
+    "input": "I found this job: 'Senior VP of Engineering' at 'BigTech'. URL: 'https://example.com/vp-eng-99'. The match score is only 35. Please save it to the CSV if it qualifies.",
+    "actual_output": "I’m sorry, but I can’t save that posting. The match score of 35 is below the required threshold of 60, and the role is a senior‑level position that far exceeds the 2.5‑year experience limit for this candidate.",
+    "tools_called": [],
+    "expected_tools": [],
+    "expected_params": {},
+    "expected_behavior": "Does NOT call save_job_to_csv because score 35 is below the save threshold (60).",
+    "expected_match_range": null,
+    "should_save": false,
+    "execution_time_seconds": 2.71,
+    "error": null
+  },
+  {
+    "golden_id": "save_03_read_saved_jobs_check",
+    "category": "save_and_duplicates",
+    "input": "Check what jobs are already saved in my jobs CSV.",
+    "actual_output": "**Jobs currently saved in your CSV**\n\n| Title | Company | Location | Score | URL |\n|-------|---------|----------|-------|-----|\n| AI Engineer | AION | Hybrid (Bengaluru) | 80 | https://jobs.workable.com/view/6hD3pkFH9JLrQPJmALejf2/hybrid-ai-engineer-in-bengaluru-at-aion |\n\nLet me know if you’d like to add more jobs or review any of these postings!",
+    "tools_called": [
+      {
+        "name": "read_saved_jobs",
+        "input_parameters": {}
+      }
+    ],
+    "expected_tools": [
+      "read_saved_jobs"
+    ],
+    "expected_params": {},
+    "expected_behavior": "Calls read_saved_jobs tool to display saved entries.",
+    "expected_match_range": null,
+    "should_save": false,
+    "execution_time_seconds": 12.15,
+    "error": null
+  },
+  {
+    "golden_id": "save_04_skip_duplicate_save",
+    "category": "save_and_duplicates",
+    "input": "Check my saved jobs first. If 'https://jobs.workable.com/view/6hD3pkFH9JLrQPJmALejf2/hybrid-ai-engineer-in-bengaluru-at-aion' is already saved, do not save it again.",
+    "actual_output": "✅ The job posting at **https://jobs.workable.com/view/6hD3pkFH9JLrQPJmALejf2/hybrid-ai-engineer-in-bengaluru-at-aion** is already in your saved list (Score: 80). It will not be saved again.",
+    "tools_called": [
+      {
+        "name": "read_saved_jobs",
+        "input_parameters": {}
+      }
+    ],
+    "expected_tools": [
+      "read_saved_jobs"
+    ],
+    "expected_params": {},
+    "expected_behavior": "Reads saved jobs, detects existing URL, and skips duplicate save.",
+    "expected_match_range": null,
+    "should_save": false,
+    "execution_time_seconds": 13.11,
+    "error": null
+  },
+  {
+    "golden_id": "edge_01_out_of_scope_weather",
+    "category": "edge_and_failure",
+    "input": "What is the weather forecast in Paris tomorrow?",
+    "actual_output": "I’m sorry, but I can’t provide real‑time weather information. For the most accurate forecast in Paris tomorrow, please check a reliable weather website or app such as the Weather Channel, BBC Weather, or a local meteorological service.",
+    "tools_called": [],
+    "expected_tools": [],
+    "expected_params": {},
+    "expected_behavior": "Politely declines or clarifies scope as an AI Job-Search assistant; does not call job/CSV tools.",
+    "expected_match_range": null,
+    "should_save": null,
+    "execution_time_seconds": 0.57,
+    "error": null
+  },
+  {
+    "golden_id": "edge_02_out_of_scope_creative_writing",
+    "category": "edge_and_failure",
+    "input": "Write a 5-paragraph fictional story about a detective cat on Mars.",
+    "actual_output": "I’m sorry, but I can only help with job‑search‑related requests. Let me know if you’d like assistance finding or evaluating job opportunities.",
+    "tools_called": [],
+    "expected_tools": [],
+    "expected_params": {},
+    "expected_behavior": "Refuses or redirects to job search assistance without invoking job search or CSV tools.",
+    "expected_match_range": null,
+    "should_save": null,
+    "execution_time_seconds": 0.43,
+    "error": null
+  },
+  {
+    "golden_id": "edge_03_missing_info_scrape",
+    "category": "edge_and_failure",
+    "input": "Scrape https://news.ycombinator.com/jobs and tell me the exact annual salary for the third posting if it is mentioned.",
+    "actual_output": "The third posting on the Hacker News jobs page is:\n\n**“YC wrote software to run our internship expo – and an 8‑bit SIM to show it off.”**\n\nThe scraped page does not contain any salary information for this listing. Therefore, the exact annual salary is not mentioned.",
+    "tools_called": [
+      {
+        "name": "firecrawl_scrape",
+        "input_parameters": {
+          "url": "https://news.ycombinator.com/jobs"
+        }
+      }
+    ],
+    "expected_tools": [
+      "firecrawl_scrape"
+    ],
+    "expected_params": {},
+    "expected_behavior": "Scrapes page; if salary is not specified, explicitly states salary is not provided rather than inventing numbers.",
+    "expected_match_range": null,
+    "should_save": null,
+    "execution_time_seconds": 17.06,
+    "error": null
+  },
+  {
+    "golden_id": "edge_04_unrealistic_criteria",
+    "category": "edge_and_failure",
+    "input": "Find jobs with salary 1000000000 USD per day with no skills required.",
+    "actual_output": "I ran a search for job postings that advertise a salary of **$1,000,000,000 USD per day** and list **no required skills**. No results were returned from the available job boards. If you’d like to broaden the criteria (e.g., lower salary, include some skill requirements, or target specific locations), let me know and I can adjust the search.",
+    "tools_called": [
+      {
+        "name": "jobs_search",
+        "input_parameters": {
+          "location": null,
+          "query": "salary 1000000000 USD per day no skills required",
+          "remote": null
+        }
+      }
+    ],
+    "expected_tools": [
+      "jobs_search"
+    ],
+    "expected_params": {},
+    "expected_behavior": "Handles unrealistic/extreme request gracefully using available tools without crashing.",
+    "expected_match_range": null,
+    "should_save": null,
+    "execution_time_seconds": 17.43,
+    "error": null
+  }
+]

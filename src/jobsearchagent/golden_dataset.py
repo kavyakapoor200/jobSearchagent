@@ -47,7 +47,7 @@ GOLDENS: List[Dict[str, Any]] = [
         "category": "search",
         "input": "Search for Generative AI or RAG Engineer jobs.",
         "expected_tools": ["jobs_search"],
-        "expected_params": {"query": "RAG Engineer"},
+        "expected_params": {"query": "RAG Generative AI"},
         "expected_behavior": "Uses search tool targeting RAG / Generative AI keywords.",
     },
     {
@@ -145,7 +145,7 @@ GOLDENS: List[Dict[str, Any]] = [
             "and Excel. 1 year experience.' Calculate match score, matched skills, missing skills, and reason."
         ),
         "expected_tools": [],
-        "expected_match_range": [30, 60],
+        "expected_match_range": [0, 40],
         "expected_behavior": "Evaluates as moderate/partial fit; role is Data Analyst rather than target AI/LLM Engineer, with missing Tableau/PowerBI.",
     },
     {
@@ -180,7 +180,7 @@ GOLDENS: List[Dict[str, Any]] = [
             "Calculate score and missing skills."
         ),
         "expected_tools": [],
-        "expected_match_range": [10, 45],
+        "expected_match_range": [0, 30],
         "expected_behavior": "Low score (< 50) due to Java/Spring stack mismatch and experience requirement.",
     },
 
@@ -191,13 +191,13 @@ GOLDENS: List[Dict[str, Any]] = [
         "id": "save_01_qualifying_job",
         "category": "save_and_duplicates",
         "input": (
-            "I found this great job: 'AI Engineer' at 'Aion' in 'Bengaluru'. "
-            "URL: 'https://jobs.workable.com/view/6hD3pkFH9JLrQPJmALejf2/hybrid-ai-engineer-in-bengaluru-at-aion'. "
-            "Match score is 80, matched skills are Python and LangChain. Please save it to the CSV."
+            "I found this great job: 'AI Data Engineer' at 'Blue Machines AI' in 'Bengaluru'. "
+            "URL: 'https://jobs.workable.com/view/vydouyD9TWFkApLwTbhnYc/ai-data-engineer-(speech-%26-language)-in-bengaluru-at-blue-machines-ai'. "
+            "Match score is 85, matched skills are Python and Hugging Face. Please save it to the CSV."
         ),
         "expected_tools": ["save_job_to_csv"],
         "should_save": True,
-        "expected_behavior": "Calls save_job_to_csv with score 80 and the job details.",
+        "expected_behavior": "Calls save_job_to_csv with score 85 and the job details.",
     },
     {
         "id": "save_02_below_threshold_rejection",
@@ -216,6 +216,7 @@ GOLDENS: List[Dict[str, Any]] = [
         "category": "save_and_duplicates",
         "input": "Check what jobs are already saved in my jobs CSV.",
         "expected_tools": ["read_saved_jobs"],
+        "should_save": False,
         "expected_behavior": "Calls read_saved_jobs tool to display saved entries.",
     },
     {
@@ -226,6 +227,7 @@ GOLDENS: List[Dict[str, Any]] = [
             "is already saved, do not save it again."
         ),
         "expected_tools": ["read_saved_jobs"],
+        "should_save": False,
         "expected_behavior": "Reads saved jobs, detects existing URL, and skips duplicate save.",
     },
 

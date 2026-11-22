@@ -61,10 +61,13 @@ def build_system_prompt(profile: Optional[Dict[str, Any]] = None) -> str:
         "1. USER INTENT ADHERENCE:\n"
         "   - Follow the specific user request directly:\n"
         "     * If the user asks to search, use `jobs_search` or `firecrawl_search` and present the results. Do not scrape or save unless requested.\n"
+        "     * If the user asks for junior or entry-level jobs, keep 'junior' or 'entry-level' in the search query (e.g. `query='junior AI engineer'`; do not drop 'junior' or 'entry-level').\n"
+        "     * If the user lists alternatives with 'or' (for example 'Generative AI or RAG Engineer'), run a separate search for each alternative (e.g. one search for 'Generative AI Engineer' and another search for 'RAG Engineer').\n"
         "     * If the user provides a URL to read or scrape, use `firecrawl_scrape` once and summarize it.\n"
         "     * If the user asks to evaluate/match a role description, reason directly against the profile (no tools needed).\n"
         "     * If the user asks to check saved jobs, use `read_saved_jobs`.\n"
-        "     * If the user asks to find, evaluate and save, perform the pipeline: search -> scrape top candidate -> match -> save if score >= 60.\n\n"
+        "     * If the user asks to find, evaluate and save, perform the pipeline: search -> scrape top candidate -> match -> save if score >= 60.\n"
+        "     * For requests outside job search (stories, weather, general questions, creative writing), politely say that you only help with job search, write no content, and call no tools.\n\n"
         "2. MATCH STEP (Reasoning):\n"
         "   - Compare the job posting against the candidate profile.\n"
         "   - Calculate `match_score` from 0 to 100 based on:\n"
@@ -81,7 +84,9 @@ def build_system_prompt(profile: Optional[Dict[str, Any]] = None) -> str:
         "   - Use ONLY facts from tool results or the profile. Never invent facts.\n"
         "   - If a page cannot be read, mark the job as unknown instead of guessing.\n"
         "   - NEVER call `firecrawl_scrape` on the same URL more than once in a run.\n"
-        "   - Be concise and targeted. Fulfill the user request with minimal tool calls."
+        "   - Be concise and targeted. Fulfill the user request with minimal tool calls.\n\n"
+        "5. SCOPE RESTRICTION:\n"
+        "   - For any requests outside job search (stories, weather, general questions, creative writing), politely say you only help with job search, write no content, and call no tools."
     )
     return prompt
 
@@ -113,10 +118,14 @@ def build_phase2_system_prompt(profile: Optional[Dict[str, Any]] = None) -> str:
         "   - State the exact location reported in the tool results; do not guess or mix up locations.\n"
         "   - If a page cannot be read, returns an error, or contains placeholder/documentation text (such as example.com) with no actual job posting, you MUST explicitly state that you cannot read the page or that no job posting was found. Do NOT invent details.\n\n"
         "2. TOOL USAGE:\n"
-        "   - In `jobs_search` or `firecrawl_search`, preserve the user's full search terms in `query` (for example, if the user asks for 'junior AI engineer', pass `query='junior AI engineer'`; do not drop 'junior').\n"
+        "   - In `jobs_search` or `firecrawl_search`, preserve the user's full search terms in `query` (for example, if the user asks for 'junior AI engineer', pass `query='junior AI engineer'`; do not drop 'junior' or 'entry-level').\n"
+        "   - If the user asks for junior or entry-level jobs, keep 'junior' or 'entry-level' in the search query.\n"
+        "   - If the user lists alternatives with 'or' (for example 'Generative AI or RAG Engineer'), run a separate search for each alternative (e.g. one search for 'Generative AI Engineer' and another search for 'RAG Engineer').\n"
         "   - When asked to read a page, call `firecrawl_scrape` on the URL and summarize the requirements accurately.\n"
         "   - NEVER call `firecrawl_scrape` on the same URL more than once.\n"
-        "   - Be concise and fulfill the request with minimal tool calls."
+        "   - Be concise and fulfill the request with minimal tool calls.\n\n"
+        "3. SCOPE RESTRICTION:\n"
+        "   - For any requests outside job search (stories, weather, general questions, creative writing), politely say you only help with job search, write no content, and call no tools."
     )
     return prompt
 

@@ -251,6 +251,12 @@ def test_edge_and_failure_safety(item: Dict[str, Any], judge: GroqJudge):
     tools_called = item.get("tools_called", [])
     expected_tools = item.get("expected_tools", [])
 
+    # Check for edge_01 and edge_02: the answer must be under 600 characters
+    if gid in ("edge_01_out_of_scope_weather", "edge_02_out_of_scope_creative_writing"):
+        assert len(output) < 600, (
+            f"Answer for {gid} must be under 600 characters, but got {len(output)} chars: '{output[:100]}...'"
+        )
+
     # 2a. Edge goldens with expected_tools = []: assert that tools_called is empty.
     if expected_tools == []:
         assert tools_called == [], (

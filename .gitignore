@@ -13,11 +13,9 @@ wheels/
 .env
 *.env
 
-# Personal data (Spec Section 3 & 9)
+# Personal data
 resume*
 *.pdf
 profile.json
 jobs.csv
-data/
 outputs/
-
