@@ -3,7 +3,7 @@
 [![Python](https://img.shields.io/badge/Python-3.11%2B-blue.svg)](https://www.python.org/)
 [![LangGraph](https://img.shields.io/badge/Orchestration-LangGraph-orange.svg)](https://github.com/langchain-ai/langgraph)
 [![MCP](https://img.shields.io/badge/Protocol-Model%20Context%20Protocol%20(MCP)-purple.svg)](https://modelcontextprotocol.io/)
-[![DeepEval](https://img.shields.io/badge/Evals-DeepEval%20%7C%2025%2F25%20Passed-brightgreen.svg)](https://github.com/confident-ai/deepeval)
+[![DeepEval](https://img.shields.io/badge/Evals-DeepEval%20%7C%2050%2F50%20Passed-brightgreen.svg)](https://github.com/confident-ai/deepeval)
 [![LLM](https://img.shields.io/badge/Inference-Groq-black.svg)](https://groq.com/)
 
 An end-to-end, production-grade autonomous **Job-Search Agent** built on **LangGraph**, powered by **Groq** high-speed inference, and connected to **dual real Model Context Protocol (MCP) servers** over `stdio`. 
@@ -56,6 +56,10 @@ flowchart TD
 - **Duplicate Prevention**: Unique URL key constraint; checks existing CSV rows and skips duplicates.
 - **9-Column Schema**: `url`, `title`, `company`, `location`, `posted_date`, `match_score`, `matched_skills`, `missing_skills`, `reason`, `saved_at`.
 - **Out-of-Scope Guardrails**: Strictly bounded to job-search domain; requests for creative writing or weather are declined under 600 characters with 0 tool calls.
+
+### 5. Runtime Duplicate Blocker & Step Budget
+- **Duplicate Interceptor**: Tracks tool calls per session using `key = (tool_name, sorted_args)`. Identical repeated calls immediately return cached outputs from earlier executions, eliminating duplicate network hops and token burns.
+- **Circuit Breaker**: Capped at `max_iterations = 8-10` with recursion budget handling, preventing infinite agent loops in production.
 
 ---
 
@@ -173,21 +177,26 @@ uv run python scripts/test_phase3_agent.py
 
 ---
 
-## 🧪 Evaluation Benchmark (DeepEval & Native MCP Metrics)
+## 🧪 Evaluation Benchmark (DeepEval & Deterministic Efficiency)
 
-The agent is evaluated against **25 golden scenarios** defined in `data/golden_dataset.json` covering 5 functional categories using DeepEval's native MCP metrics (`MCPUseMetric`, `MCPTaskCompletionMetric`), custom G-Eval Match Rubric, and strict deterministic assertions:
+The agent is evaluated against **25 golden scenarios** across **50 comprehensive test cases** defined in `tests/test_agent_evals.py` covering 5 functional categories using DeepEval's native MCP metrics (`MCPUseMetric`, `MCPTaskCompletionMetric`), custom G-Eval Match Rubric, strict deterministic assertions, and category-aware step efficiency checks:
 
-| Category | Goldens | Evaluated Capabilities & Native MCP Metrics |
+| Category | Goldens | Evaluated Capabilities & Metrics |
 | :--- | :---: | :--- |
 | **Search** | 7 | `MCPUseMetric` (tool selection & argument correctness over MCP servers), `MCPTaskCompletionMetric` (task fulfillment), query preservation, "junior" retention, "or" alternative split |
 | **Read Job** | 4 | `MCPUseMetric` (`firecrawl_scrape` tool primitive selection & args), `MCPTaskCompletionMetric` (scrape completion & error handling on broken URLs) |
 | **Match** | 6 | Profile alignment, experience deductions, G-Eval Match Rubric, score bounds |
 | **Save & Duplicates** | 4 | Threshold enforcement ($\ge 60$), duplicate URL prevention, CSV tools |
 | **Edge & Failure** | 4 | Weather/story refusal, zero tools called, response character cap ($<600$), self-contradiction G-Eval |
+| **Step Efficiency** | 25 | Category-based `max_tool_calls` cap, smart duplicate call detection, and error-retry allowances (100% deterministic, 0ms LLM overhead) |
 
 ### Run the Evaluation Suite:
 ```bash
+# Run all tests (MCP evals + deterministic step efficiency)
 uv run pytest tests/test_agent_evals.py -v
+
+# Run deterministic step efficiency tests only (instant 0ms execution)
+uv run pytest tests/test_agent_evals.py -k "test_step_efficiency_deterministic" -v
 ```
 
 ### Benchmark Results:
@@ -195,35 +204,22 @@ uv run pytest tests/test_agent_evals.py -v
 ============================= test session starts =============================
 platform win32 -- Python 3.11.0, pytest-9.2.0, pluggy-1.7.0
 rootdir: D:\jobSearchagent
-collected 25 items
+collected 50 items
 
-tests/test_agent_evals.py::test_search_tool_correctness[search_01_bengaluru_ai] PASSED [  4%]
-tests/test_agent_evals.py::test_search_tool_correctness[search_02_remote_llm] PASSED [  8%]
-tests/test_agent_evals.py::test_search_tool_correctness[search_03_junior_ai_india] PASSED [ 12%]
-tests/test_agent_evals.py::test_search_tool_correctness[search_04_rag_engineer] PASSED [ 16%]
-tests/test_agent_evals.py::test_search_tool_correctness[search_05_hyderabad_ai] PASSED [ 20%]
-tests/test_agent_evals.py::test_search_tool_correctness[search_06_langgraph_specialist] PASSED [ 24%]
-tests/test_agent_evals.py::test_search_tool_correctness[search_07_web_search_company_careers] PASSED [ 28%]
-tests/test_agent_evals.py::test_read_job_tool_correctness[read_01_valid_posting] PASSED [ 32%]
-tests/test_agent_evals.py::test_read_job_tool_correctness[read_02_hacker_news_read] PASSED [ 36%]
-tests/test_agent_evals.py::test_read_job_tool_correctness[read_03_broken_url] PASSED [ 40%]
-tests/test_agent_evals.py::test_read_job_tool_correctness[read_04_read_and_extract_skills] PASSED [ 44%]
-tests/test_agent_evals.py::test_match_quality_geval[match_01_strong_fit] PASSED [ 48%]
-tests/test_agent_evals.py::test_match_quality_geval[match_02_senior_weak_fit] PASSED [ 52%]
-tests/test_agent_evals.py::test_match_quality_geval[match_03_partial_fit] PASSED [ 56%]
-tests/test_agent_evals.py::test_match_quality_geval[match_04_unrelated_frontend] PASSED [ 60%]
-tests/test_agent_evals.py::test_match_quality_geval[match_05_agentic_ai_strong] PASSED [ 64%]
-tests/test_agent_evals.py::test_match_quality_geval[match_06_java_backend_mismatch] PASSED [ 68%]
-tests/test_agent_evals.py::test_save_and_duplicates_rules[save_01_qualifying_job] PASSED [ 72%]
-tests/test_agent_evals.py::test_save_and_duplicates_rules[save_02_below_threshold_rejection] PASSED [ 76%]
-tests/test_agent_evals.py::test_save_and_duplicates_rules[save_03_read_saved_jobs_check] PASSED [ 80%]
-tests/test_agent_evals.py::test_save_and_duplicates_rules[save_04_skip_duplicate_save] PASSED [ 84%]
-tests/test_agent_evals.py::test_edge_and_failure_safety[edge_01_out_of_scope_weather] PASSED [ 88%]
-tests/test_agent_evals.py::test_edge_and_failure_safety[edge_02_out_of_scope_creative_writing] PASSED [ 92%]
-tests/test_agent_evals.py::test_edge_and_failure_safety[edge_03_missing_info_scrape] PASSED [ 96%]
-tests/test_agent_evals.py::test_edge_and_failure_safety[edge_04_unrealistic_criteria] PASSED [100%]
+tests/test_agent_evals.py::test_search_tool_correctness[search_01_bengaluru_ai] PASSED [  2%]
+...
+tests/test_agent_evals.py::test_read_job_tool_correctness[read_04_read_and_extract_skills] PASSED [ 22%]
+...
+tests/test_agent_evals.py::test_match_quality_geval[match_06_java_backend_mismatch] PASSED [ 34%]
+...
+tests/test_agent_evals.py::test_save_and_duplicates_rules[save_04_skip_duplicate_save] PASSED [ 42%]
+...
+tests/test_agent_evals.py::test_edge_and_failure_safety[edge_04_unrealistic_criteria] PASSED [ 50%]
+tests/test_agent_evals.py::test_step_efficiency_deterministic[search_01_bengaluru_ai] PASSED [ 52%]
+...
+tests/test_agent_evals.py::test_step_efficiency_deterministic[edge_04_unrealistic_criteria] PASSED [100%]
 
-======================= 25 passed, 18 warnings in 5.88s =======================
+============================= 50 passed in 1.96s =============================
 ```
 
 ---

@@ -357,3 +357,66 @@ def test_edge_and_failure_safety(item: Dict[str, Any], judge: GroqJudge):
         )
         test_case = LLMTestCase(input=item["input"], actual_output=output)
         assert_test(test_case, [self_contradiction_metric])
+
+
+# =============================================================================
+# 6. DETERMINISTIC STEP EFFICIENCY EVALS: max_tool_calls & smart duplicate check
+# =============================================================================
+
+MAX_STEPS_BY_CATEGORY = {
+    "search": 8,              # Multi-query/filtered search allows up to 8 calls
+    "read_job": 3,            # Scrapes should be 1-3 calls max
+    "match": 0,               # Reasoning against candidate profile, 0 tools
+    "save_and_duplicates": 3, # Checking saved + saving allows up to 3 calls
+    "edge_and_failure": 2,    # Out-of-scope = 0, missing info/unrealistic = 1-2 calls
+}
+
+MAX_RETRIES_ON_ERROR = 1
+
+
+@pytest.mark.parametrize("item", BASELINE_OUTPUTS, ids=[g["golden_id"] for g in BASELINE_OUTPUTS])
+def test_step_efficiency_deterministic(item: Dict[str, Any]):
+    """Verify agent execution step efficiency deterministically without LLM judge noise.
+
+    1. Asserts tool calls do not exceed category-specific max_tool_calls budget.
+    2. Detects wasteful duplicate calls (same tool + same parameters).
+    3. Allows at most MAX_RETRIES_ON_ERROR (1 retry) if a tool call encountered an error.
+    """
+    category = item.get("category", "")
+    gid = item.get("golden_id", "")
+    tools_called = item.get("tools_called", [])
+
+    # 1. Category-based tool call budget cap
+    max_allowed = MAX_STEPS_BY_CATEGORY.get(category, 8)
+    assert len(tools_called) <= max_allowed, (
+        f"Tool call count {len(tools_called)} exceeds budget of {max_allowed} for category '{category}' in {gid}!"
+    )
+
+    # 2. Smart Duplicate Tool Call Check
+    seen_successful_calls = set()
+    failed_call_counts: Dict[str, int] = {}
+
+    for tc in tools_called:
+        tool_name = tc.get("name", "")
+        params = tc.get("input_parameters", {})
+        # Canonical signature: tool name + sorted parameters
+        sig = (tool_name, json.dumps(params, sort_keys=True, default=str))
+
+        # Check if already succeeded previously in this trajectory
+        assert sig not in seen_successful_calls, (
+            f"Wasteful duplicate call in {gid}: '{tool_name}' with identical parameters was already executed successfully!"
+        )
+
+        is_error = tc.get("is_error", False)
+        output_str = str(tc.get("output", "")).lower()
+        if "error" in output_str or "failed" in output_str or "403" in output_str:
+            is_error = True
+
+        if is_error:
+            failed_call_counts[sig] = failed_call_counts.get(sig, 0) + 1
+            assert failed_call_counts[sig] <= MAX_RETRIES_ON_ERROR + 1, (
+                f"Excessive retries in {gid}: '{tool_name}' failed and was retried {failed_call_counts[sig]} times (max {MAX_RETRIES_ON_ERROR} allowed)!"
+            )
+        else:
+            seen_successful_calls.add(sig)
+

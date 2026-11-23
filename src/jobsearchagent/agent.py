@@ -14,7 +14,7 @@ from typing import Any, Dict, List, Optional
 
 from dotenv import load_dotenv
 from langchain_core.messages import AIMessage, HumanMessage
-from langchain_core.tools import BaseTool
+from langchain_core.tools import BaseTool, StructuredTool
 from langchain_groq import ChatGroq
 from langgraph.prebuilt import create_react_agent
 
@@ -130,6 +130,68 @@ def build_phase2_system_prompt(profile: Optional[Dict[str, Any]] = None) -> str:
     return prompt
 
 
+class DuplicateCallBlocker:
+    """Tracks and intercepts duplicate tool calls within a single execution run.
+
+    Adheres to the runtime duplicate blocker rule: key = tool name + sorted args.
+    Returns cached result on repeat calls to avoid redundant network / MCP executions.
+    """
+
+    def __init__(self) -> None:
+        self.cache: Dict[str, Any] = {}
+        self.call_history: List[Dict[str, Any]] = []
+
+    def reset(self) -> None:
+        """Clear cache and call history before each agent execution."""
+        self.cache.clear()
+        self.call_history.clear()
+
+    def get_key(self, tool_name: str, args: Dict[str, Any]) -> str:
+        return f"{tool_name}:{json.dumps(args, sort_keys=True, default=str)}"
+
+    def wrap_tool(self, tool: BaseTool) -> BaseTool:
+        orig_func = tool.func
+        orig_coroutine = tool.coroutine
+
+        async def _cached_coroutine(**kwargs: Any) -> Any:
+            key = self.get_key(tool.name, kwargs)
+            if key in self.cache:
+                print(f"  [DUPLICATE BLOCKED] Reusing cached result for {tool.name}")
+                return self.cache[key]
+            if orig_coroutine:
+                result = await orig_coroutine(**kwargs)
+            elif orig_func:
+                result = orig_func(**kwargs)
+            else:
+                result = await tool.ainvoke(kwargs)
+            self.cache[key] = result
+            self.call_history.append({"tool": tool.name, "args": kwargs, "cached": False})
+            return result
+
+        def _cached_func(**kwargs: Any) -> Any:
+            key = self.get_key(tool.name, kwargs)
+            if key in self.cache:
+                print(f"  [DUPLICATE BLOCKED] Reusing cached result for {tool.name}")
+                return self.cache[key]
+            if orig_func:
+                result = orig_func(**kwargs)
+            elif orig_coroutine:
+                result = asyncio.run(orig_coroutine(**kwargs))
+            else:
+                result = tool.invoke(kwargs)
+            self.cache[key] = result
+            self.call_history.append({"tool": tool.name, "args": kwargs, "cached": False})
+            return result
+
+        return StructuredTool(
+            name=tool.name,
+            description=tool.description,
+            args_schema=tool.args_schema,
+            func=_cached_func,
+            coroutine=_cached_coroutine,
+        )
+
+
 class JobSearchAgent:
     """LangGraph agent equipped with cached Firecrawl MCP tools and optional Filesystem CSV tools."""
 
@@ -140,10 +202,13 @@ class JobSearchAgent:
         system_prompt: Optional[str] = None,
         csv_path: Optional[Path | str] = None,
         include_csv_tools: bool = True,
+        max_iterations: int = 8,
     ):
         self.model_name = model_name or os.getenv("GROQ_AGENT_MODEL", "openai/gpt-oss-20b")
         self.tools = tools
         self.include_csv_tools = include_csv_tools
+        self.max_iterations = min(max(max_iterations, 1), 10)  # Runtime cap: 8-10 iterations max
+        self.duplicate_blocker = DuplicateCallBlocker()
         if system_prompt:
             self.system_prompt = system_prompt
         elif include_csv_tools:
@@ -154,12 +219,15 @@ class JobSearchAgent:
         self._graph = None
 
     async def initialize(self) -> None:
-        """Connect to MCP servers and compile the LangGraph ReAct agent."""
+        """Connect to MCP servers and compile the LangGraph ReAct agent with duplicate blocker."""
         if self.tools is None:
-            self.tools = await load_mcp_agent_tools(
+            raw_tools = await load_mcp_agent_tools(
                 csv_path=self.csv_path,
                 include_csv_tools=self.include_csv_tools,
             )
+            self.tools = [self.duplicate_blocker.wrap_tool(t) for t in raw_tools]
+        else:
+            self.tools = [self.duplicate_blocker.wrap_tool(t) for t in self.tools]
 
         llm = ChatGroq(
             model=self.model_name,
@@ -173,15 +241,30 @@ class JobSearchAgent:
             prompt=self.system_prompt,
         )
 
-    async def arun(self, question: str, max_steps: int = 15) -> Dict[str, Any]:
-        """Run the agent asynchronously and return final answer and tool calls."""
+    async def arun(self, question: str, max_steps: Optional[int] = None) -> Dict[str, Any]:
+        """Run the agent asynchronously with iteration cap, duplicate blocker, and recursion budget."""
         if self._graph is None:
             await self.initialize()
 
-        inputs = {"messages": [HumanMessage(content=question)]}
-        config = {"recursion_limit": max_steps * 2}
+        # Reset duplicate blocker cache for this fresh execution run
+        self.duplicate_blocker.reset()
 
-        result = await self._graph.ainvoke(inputs, config=config)
+        steps_budget = min(max_steps or self.max_iterations, 10)
+        inputs = {"messages": [HumanMessage(content=question)]}
+        config = {"recursion_limit": steps_budget * 2}
+
+        try:
+            result = await self._graph.ainvoke(inputs, config=config)
+        except Exception as exc:
+            # Handle recursion budget exhaustion gracefully
+            if "recursion" in str(exc).lower():
+                return {
+                    "answer": "Budget exceeded: maximum agent iterations reached.",
+                    "tool_calls": [],
+                    "message_count": steps_budget * 2,
+                    "budget_exceeded": True,
+                }
+            raise exc
 
         messages = result.get("messages", [])
         tool_calls: List[Dict[str, Any]] = []
@@ -207,8 +290,8 @@ class JobSearchAgent:
             "message_count": len(messages),
         }
 
-    def run(self, question: str, max_steps: int = 15) -> Dict[str, Any]:
-        """Synchronous wrapper for run_agent."""
+    def run(self, question: str, max_steps: Optional[int] = None) -> Dict[str, Any]:
+        """Synchronous wrapper for run_agent with max_steps cap."""
         return asyncio.run(self.arun(question, max_steps=max_steps))
 
 
