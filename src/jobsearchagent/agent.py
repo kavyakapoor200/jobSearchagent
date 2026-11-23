@@ -19,7 +19,7 @@ from langchain_groq import ChatGroq
 from langgraph.prebuilt import create_react_agent
 
 from jobsearchagent.csv_tools import get_filesystem_csv_tools, set_active_csv_path
-from jobsearchagent.mcp_tools import load_firecrawl_mcp_tools
+from jobsearchagent.mcp_tools import load_firecrawl_mcp_tools, load_mcp_agent_tools
 
 ENV_PATH = Path(__file__).resolve().parents[2] / ".env"
 load_dotenv(dotenv_path=ENV_PATH)
@@ -156,14 +156,10 @@ class JobSearchAgent:
     async def initialize(self) -> None:
         """Connect to MCP servers and compile the LangGraph ReAct agent."""
         if self.tools is None:
-            # 1. Firecrawl search and read MCP tools
-            mcp_tools = await load_firecrawl_mcp_tools()
-            if self.include_csv_tools:
-                # 2. Filesystem CSV tools
-                csv_tools = get_filesystem_csv_tools(csv_path=self.csv_path)
-                self.tools = list(mcp_tools) + list(csv_tools)
-            else:
-                self.tools = list(mcp_tools)
+            self.tools = await load_mcp_agent_tools(
+                csv_path=self.csv_path,
+                include_csv_tools=self.include_csv_tools,
+            )
 
         llm = ChatGroq(
             model=self.model_name,
