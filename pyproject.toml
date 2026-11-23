@@ -1,8 +1,18 @@
 [project]
 name = "jobsearchagent"
 version = "0.1.0"
-description = "AI Job Search Agent with DeepEval"
+description = "Autonomous AI Job-Search Agent with LangGraph, dual stdio MCP (Firecrawl & FastMCP JobStore), Groq LLM, and DeepEval CI/CD evaluations"
 readme = "README.md"
+keywords = [
+    "ai-agent",
+    "langgraph",
+    "model-context-protocol",
+    "mcp",
+    "firecrawl",
+    "deepeval",
+    "groq",
+    "job-search",
+]
 authors = [
     { name = "kavyakapoor200", email = "kavyakapoor869@gmail.com" }
 ]
