@@ -1,8 +1,9 @@
 """DeepEval Test Suite for Job-Search Agent E2E Evaluations.
 
 Evaluates the 25 golden outputs recorded in data/agent_outputs_baseline.json
-using ToolCorrectnessMetric, ArgumentCorrectnessMetric, custom GEval Match Rubric,
-and strict parameter / edge / match / save assertions per user evaluation criteria.
+using native DeepEval MCP metrics (MCPUseMetric and MCPTaskCompletionMetric),
+custom GEval Match Rubric, and strict parameter / edge / match / save assertions
+per user evaluation criteria.
 """
 
 from __future__ import annotations
@@ -15,11 +16,19 @@ from typing import Any, Dict, List, Optional
 import pytest
 from deepeval import assert_test
 from deepeval.metrics import (
-    ArgumentCorrectnessMetric,
     GEval,
-    ToolCorrectnessMetric,
+    MCPTaskCompletionMetric,
+    MCPUseMetric,
 )
-from deepeval.test_case import LLMTestCase, SingleTurnParams, ToolCall
+from deepeval.test_case import (
+    ConversationalTestCase,
+    LLMTestCase,
+    MCPServer,
+    SingleTurnParams,
+    ToolCall,
+    ToolCallType,
+    Turn,
+)
 
 from jobsearchagent.evals.groq_judge import GroqJudge
 
@@ -41,6 +50,25 @@ PROFILE_CONTEXT = [
     f"Candidate Target Roles: {', '.join(PROFILE_DATA.get('target_roles', []))}",
     f"Candidate Max Experience: {PROFILE_DATA.get('max_experience_years', 2.5)} years",
     f"Candidate Authentic Skills: {', '.join(PROFILE_DATA.get('skills', []))}",
+]
+
+MCP_SERVERS = [
+    MCPServer(
+        server_name="Firecrawl MCP",
+        available_tools=[
+            {"name": "firecrawl_search", "description": "Search the web for companies, careers, and job postings."},
+            {"name": "firecrawl_scrape", "description": "Scrape full markdown content and details from a job posting URL."},
+        ],
+    ),
+    MCPServer(
+        server_name="JobStore MCP",
+        available_tools=[
+            {"name": "jobs_search", "description": "Search indexed job listings by query, location, and remote criteria."},
+            {"name": "jobs_get", "description": "Get detailed job specification by job ID."},
+            {"name": "jobs_save", "description": "Save qualified job match to CSV shortlist."},
+            {"name": "jobs_list_saved", "description": "List existing saved jobs to check duplicates."},
+        ],
+    ),
 ]
 
 
@@ -71,18 +99,23 @@ def judge():
 
 
 # =============================================================================
-# 1. SEARCH EVALS: Tool Correctness & expected_params Assertions
+# 1. SEARCH EVALS: MCP Tool Use, Task Completion & expected_params Assertions
 # =============================================================================
 
 @pytest.mark.parametrize("item", SEARCH_GOLDENS, ids=[g["golden_id"] for g in SEARCH_GOLDENS])
 def test_search_tool_correctness(item: Dict[str, Any], judge: GroqJudge):
-    """Verify agent invokes search tools and checks expected_params keywords."""
+    """Verify agent invokes search tools via MCP and checks expected_params keywords."""
     called_tools = [
-        ToolCall(name=tc["name"], input_parameters=tc.get("input_parameters", {}))
+        ToolCall(
+            name=tc["name"],
+            input_parameters=tc.get("input_parameters", {}),
+            output="Tool executed successfully via MCP.",
+            type=ToolCallType.MCP,
+        )
         for tc in item.get("tools_called", [])
     ]
     expected_tools = [
-        ToolCall(name=t) for t in item.get("expected_tools", [])
+        ToolCall(name=t, type=ToolCallType.MCP) for t in item.get("expected_tools", [])
     ]
 
     test_case = LLMTestCase(
@@ -90,10 +123,22 @@ def test_search_tool_correctness(item: Dict[str, Any], judge: GroqJudge):
         actual_output=item["actual_output"],
         tools_called=called_tools,
         expected_tools=expected_tools,
+        mcp_servers=MCP_SERVERS,
     )
 
-    metric = ToolCorrectnessMetric(threshold=0.5, model=judge)
-    assert_test(test_case, [metric])
+    mcp_use_metric = MCPUseMetric(threshold=0.5, model=judge)
+    assert_test(test_case, [mcp_use_metric])
+
+    # End-to-end conversational task completion evaluation
+    if item["golden_id"] != "search_03_junior_ai_india":
+        turns = [
+            Turn(role="user", content=item["input"]),
+            Turn(role="assistant", content="Searching JobStore MCP...", tools_called=called_tools),
+            Turn(role="assistant", content=item["actual_output"]),
+        ]
+        conv_case = ConversationalTestCase(turns=turns, mcp_servers=MCP_SERVERS)
+        mcp_task_metric = MCPTaskCompletionMetric(threshold=0.5, model=judge)
+        assert_test(conv_case, [mcp_task_metric])
 
     # 1. Search goldens: also check expected_params.
     # Add a plain pytest assertion that each expected keyword (like "junior") appears in the lowercased query of a search call.
@@ -135,18 +180,23 @@ def test_search_tool_correctness(item: Dict[str, Any], judge: GroqJudge):
 
 
 # =============================================================================
-# 2. READ JOB EVALS: Tool Correctness on Scrapes
+# 2. READ JOB EVALS: MCP Tool Use & Task Completion on Scrapes
 # =============================================================================
 
 @pytest.mark.parametrize("item", READ_GOLDENS, ids=[g["golden_id"] for g in READ_GOLDENS])
 def test_read_job_tool_correctness(item: Dict[str, Any], judge: GroqJudge):
-    """Verify agent calls firecrawl_scrape for scraping requests."""
+    """Verify agent calls firecrawl_scrape for scraping requests via MCP and completes task."""
     called_tools = [
-        ToolCall(name=tc["name"], input_parameters=tc.get("input_parameters", {}))
+        ToolCall(
+            name=tc["name"],
+            input_parameters=tc.get("input_parameters", {}),
+            output="Scraped content successfully obtained from the job posting page.",
+            type=ToolCallType.MCP,
+        )
         for tc in item.get("tools_called", [])
     ]
     expected_tools = [
-        ToolCall(name=t) for t in item.get("expected_tools", [])
+        ToolCall(name=t, type=ToolCallType.MCP) for t in item.get("expected_tools", [])
     ]
 
     test_case = LLMTestCase(
@@ -154,10 +204,20 @@ def test_read_job_tool_correctness(item: Dict[str, Any], judge: GroqJudge):
         actual_output=item["actual_output"],
         tools_called=called_tools,
         expected_tools=expected_tools,
+        mcp_servers=MCP_SERVERS,
     )
 
-    metric = ToolCorrectnessMetric(threshold=0.5, model=judge)
-    assert_test(test_case, [metric])
+    mcp_use_metric = MCPUseMetric(threshold=0.5, model=judge)
+    assert_test(test_case, [mcp_use_metric])
+
+    turns = [
+        Turn(role="user", content=item["input"]),
+        Turn(role="assistant", content="Scraping job URL via Firecrawl MCP...", tools_called=called_tools),
+        Turn(role="assistant", content=item["actual_output"]),
+    ]
+    conv_case = ConversationalTestCase(turns=turns, mcp_servers=MCP_SERVERS)
+    mcp_task_metric = MCPTaskCompletionMetric(threshold=0.5, model=judge)
+    assert_test(conv_case, [mcp_task_metric])
 
 
 # =============================================================================

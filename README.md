@@ -173,17 +173,17 @@ uv run python scripts/test_phase3_agent.py
 
 ---
 
-## 🧪 Evaluation Benchmark (DeepEval)
+## 🧪 Evaluation Benchmark (DeepEval & Native MCP Metrics)
 
-The agent is evaluated against **25 golden scenarios** defined in `data/golden_dataset.json` covering 5 functional categories:
+The agent is evaluated against **25 golden scenarios** defined in `data/golden_dataset.json` covering 5 functional categories using DeepEval's native MCP metrics (`MCPUseMetric`, `MCPTaskCompletionMetric`), custom G-Eval Match Rubric, and strict deterministic assertions:
 
-| Category | Goldens | Evaluated Capabilities |
+| Category | Goldens | Evaluated Capabilities & Native MCP Metrics |
 | :--- | :---: | :--- |
-| **Search** | 7 | `jobs_search`, query preservation, "junior" retention, "or" alternative split |
-| **Read Job** | 4 | `firecrawl_scrape`, error handling on broken URLs, hallucination prevention |
+| **Search** | 7 | `MCPUseMetric` (tool selection & argument correctness over MCP servers), `MCPTaskCompletionMetric` (task fulfillment), query preservation, "junior" retention, "or" alternative split |
+| **Read Job** | 4 | `MCPUseMetric` (`firecrawl_scrape` tool primitive selection & args), `MCPTaskCompletionMetric` (scrape completion & error handling on broken URLs) |
 | **Match** | 6 | Profile alignment, experience deductions, G-Eval Match Rubric, score bounds |
 | **Save & Duplicates** | 4 | Threshold enforcement ($\ge 60$), duplicate URL prevention, CSV tools |
-| **Edge & Failure** | 4 | Weather/story refusal, zero tools called, response character cap ($<600$) |
+| **Edge & Failure** | 4 | Weather/story refusal, zero tools called, response character cap ($<600$), self-contradiction G-Eval |
 
 ### Run the Evaluation Suite:
 ```bash
